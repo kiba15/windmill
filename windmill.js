@@ -17,6 +17,7 @@ const myFunc = () => {
     try {
       // STATUS 1
 
+      let message
       const status1 = await valueFromPage(process.env.URL_STATUS1, "body");
       const status2 = await valueFromPage(process.env.URL_STATUS2, "body");
 
@@ -24,7 +25,14 @@ const myFunc = () => {
       if (status1 === undefined || status2 === undefined) {
         console.log('error getting info...')
         if ((new Date() - lastDate) / (1000 * 3600) >= hoursInactive) {
-          chatIds.forEach((chatId) => bot.sendMessage(chatId, `Ошибка получения данных! Сервер не отвечает больше 0.5 часа с ${dateTimeToLocale(lastDate)}, проверьте все ли с ним в порядке!`));
+        
+        message = `Ошибка получения данных! Сервер не отвечает больше 0.5 часа с ${dateTimeToLocale(lastDate)}, проверьте все ли с ним в порядке!` 
+        chatIds.forEach((chatId) => {
+        try {
+            bot.sendMessage(chatId, message)
+            }  catch (err) {
+            console.log(err.message)}
+        });
         }
         return;
       }
@@ -42,9 +50,14 @@ const myFunc = () => {
         const newRecord = {"status": currentValue, "comment": 'status changed'}
         await addStatus(newRecord)
 
-        let message = `Значение поля Status изменилось с ${prevValue} на ${currentValue}`;        
+        message = `Значение поля Status изменилось с ${prevValue} на ${currentValue}`;        
         console.log(message);
-        chatIds.forEach((chatId) => bot.sendMessage(chatId, message));
+        chatIds.forEach((chatId) => {
+        try {
+            bot.sendMessage(chatId, message)
+            }  catch (err) {
+            console.log(err.message)}
+        });
 
       }
       

@@ -1,6 +1,9 @@
 import TelegramBot from "node-telegram-bot-api";
-import { lastStatus }       from "../../modules/postgres_m/postgres.js";
-import { valueFromPage }    from "../../modules/parsing_m/parse.js";
+import {
+  lastStatus,
+  addUserAction,
+} from "../../modules/postgres_m/postgres.js";
+import { valueFromPage } from "../../modules/parsing_m/parse.js";
 import { dateTimeToLocale } from "../../modules/common_m/common.js";
 import fetch from "node-fetch";
 import jsdom from "jsdom";
@@ -10,7 +13,7 @@ dotenv.config();
 const { JSDOM } = jsdom;
 
 const token = process.env.TG_TOKEN;
-const chatIds = process.env.TG_USERS.split(',');
+const chatIds = process.env.TG_USERS.split(",");
 const adminId = process.env.TG_ADMIN;
 
 const bot = new TelegramBot(token, { polling: true });
@@ -18,15 +21,16 @@ const bot = new TelegramBot(token, { polling: true });
 // ОБРАБОТКА СТАРТА БОТА
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id.toString();
-  
-  console.log(chatId)
-  console.log(typeof chatId)
-  console.log(chatIds)   
+
+  // Запишем в bd действие
+  //(async () => {
+  //await addUserAction({"userId": chatId, "userName": msg.chat.first_name, "action": 'start bot'})
+  //})()
 
   if (!chatIds.includes(chatId)) {
     bot.sendMessage(chatId, `Access denied for ${chatId}`);
-    console.log(chatId)
-    console.log(chatIds)
+    console.log(chatId);
+    console.log(chatIds);
     return;
   }
 
@@ -93,6 +97,13 @@ bot.on("message", (msg) => {
     // Обернули в асинхронную функцию
     (async () => {
       try {
+        // Запишем в bd действие
+        await addUserAction({
+          userId: chatId,
+          userName: msg.chat.first_name,
+          action: msg.text,
+        });
+
         // STATUSES
         const status1 = await valueFromPage(process.env.URL_STATUS1, "body");
         const status2 = await valueFromPage(process.env.URL_STATUS2, "body");
@@ -115,12 +126,21 @@ bot.on("message", (msg) => {
     // Обернули в асинхронную функцию
     (async () => {
       try {
-        const result = await lastStatus()
+        // Запишем в bd действие
+        await addUserAction({
+          userId: chatId,
+          userName: msg.chat.first_name,
+          action: msg.text,
+        });
+
+        const result = await lastStatus();
         bot.sendMessage(
           chatId,
           result === undefined
             ? `Последний статус еще не записан...`
-            : `Последний статус ${result.status} - ${dateTimeToLocale(result.date)}`
+            : `Последний статус ${result.status} - ${dateTimeToLocale(
+                result.date
+              )}`
         );
       } catch (err) {
         bot.sendMessage(chatId, `Ошибка получения данных! ${err.message}`);
@@ -129,10 +149,18 @@ bot.on("message", (msg) => {
   } else {
     //chatIds.forEach((chatId) => bot.sendMessage(chatId, msg.text));
 
-    // send a message to the chat acknowledging receipt of their message
+    // Запишем в bd действие
+    (async () => {
+      await addUserAction({
+        userId: chatId,
+        userName: msg.chat.first_name,
+        action: msg.text,
+      });
+    })();
+
     bot.sendMessage(
       chatId,
-      `Получили ваше сообщение! ${msg.text} ${msg.message_id} ${msg.chat.first_name} ${msg.chat.id}`
+      `Получили ваше сообщение! ${msg.text} ${msg.message_id} ${msg.chat.first_name} ${chatId}`
     );
   }
 });

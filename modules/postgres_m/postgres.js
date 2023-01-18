@@ -33,7 +33,7 @@ pool.query(
   `CREATE TABLE IF NOT EXISTS "status" (
 	    "date" TIMESTAMP,
 	    "status" VARCHAR(10) NOT NULL,
-	    "comment" VARCHAR(100) NOT NULL,
+	    "comment" VARCHAR(100),
 	    PRIMARY KEY ("date")
      )`,
   (err, res) => {
@@ -42,6 +42,24 @@ pool.query(
       throw err;
     } else {
       console.log("success create table 'status'");
+    }
+  }
+);
+// create table "useractions"
+pool.query(
+  `CREATE TABLE IF NOT EXISTS "useractions" (
+	    "date" TIMESTAMP,
+	    "userid" VARCHAR(20) NOT NULL,
+	    "username" VARCHAR(20) NOT NULL,         
+	    "action" VARCHAR(200),
+	    PRIMARY KEY ("date")
+     )`,
+  (err, res) => {
+    if (err) {
+      console.log(err.stack);
+      throw err;
+    } else {
+      console.log("success create table 'useractions'");
     }
   }
 );
@@ -58,8 +76,6 @@ const execute = async (query) => {
     pool.end(); // closes connection
   }
 };
-
-
 
 const lastStatus = async () => {
 
@@ -91,7 +107,27 @@ const addStatus = async (statusObject) => {
         client.release();
         return true;
       })
-      .catch((e) => {
+      .catch((err) => {
+        client.release();
+        console.log(err.stack);
+        return false;
+      });
+  });
+};
+const addUserAction = async (actionObject) => {
+  //
+  const query = `INSERT INTO useractions (date, userid, username, action)
+  VALUES(current_timestamp(2), '${actionObject.userId}', '${actionObject.userName}', '${actionObject.action}');`;
+  //console.log(query)
+
+  pool.connect().then((client) => {
+    return client
+      .query(query) // your query string here
+      .then((res) => {
+        client.release();
+        return true;
+      })
+      .catch((err) => {
         client.release();
         console.log(err.stack);
         return false;
@@ -99,4 +135,4 @@ const addStatus = async (statusObject) => {
   });
 };
 
-export { pool, execute, addStatus, lastStatus };
+export { pool, execute, addStatus, addUserAction, lastStatus };
