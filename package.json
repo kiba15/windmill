@@ -1,0 +1,20 @@
+{
+  "name": "windmill",
+  "version": "1.0.0",
+  "description": "windmill project",
+  "main": "windmill.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jdom": "^3.2.5",
+    "jsdom": "^21.0.0",
+    "node-fetch": "^3.3.0",
+    "node-telegram-bot-api": "^0.61.0",
+    "pg": "^8.8.0",
+    "pm2": "^5.2.2"
+  }
+}
