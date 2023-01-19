@@ -145,10 +145,8 @@ bot.on("message", (msg) => {
               )}`
         );
         
-        let stringActions = ''
-        lastActions.forEach((el) => stringActions = stringActions + `${dateTimeToLocale(el.date)} ${el.username}\n${el.action}\n`) 
-         if (stringActions) {
-            bot.sendMessage(chatId, stringActions);
+         if (lastActions.length) {
+            bot.sendMessage(chatId, lastActions.reduce((mes, el) => mes = mes + `${dateTimeToLocale(el.date)} ${el.username}\n${el.action}\n`, '' ));
         }
 
       } catch (err) {
