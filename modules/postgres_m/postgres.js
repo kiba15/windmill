@@ -6,19 +6,22 @@ const { Pool } = pg;
 dotenv.config();
 
 
-const poolForCreateNewDB = new Pool({
+const poolnewdb = new Pool({
   user: process.env.DB_USER,
   host: process.env.HOST,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
 });
+console.log(process.env.DB_DATABASE)
+//(async () => {
 // create database if not exists 
-const dbQuery = await poolForCreateNewDB.query(`SELECT FROM pg_database WHERE datname = $1`, [process.env.DB_DATABASE])
+const dbQuery = await poolnewdb.query(`SELECT FROM pg_database WHERE datname = $1`, [process.env.DB_DATABASE])
 if (dbQuery.rows.length === 0)  {
     // database does not exist, make it:
-    await poolForCreateNewDB.query(`CREATE DATABASE ${process.env.DB_DATABASE}`)
+    await poolnewdb.query(`CREATE DATABASE ${process.env.DB_DATABASE}`)
     console.log(`Database ${process.env.DB_DATABASE} created!`)
 }
+//})()
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -135,4 +138,4 @@ const addUserAction = async (actionObject) => {
   });
 };
 
-export { pool, execute, addStatus, addUserAction, lastStatus };
+export { poolnewdb, pool, execute, addStatus, addUserAction, lastStatus };

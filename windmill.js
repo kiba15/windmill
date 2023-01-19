@@ -1,8 +1,9 @@
 import { chatIds, adminId, token, bot }  from "./modules/telegram_m/telegram.js";
-import { pool, execute, addStatus, lastStatus }   from "./modules/postgres_m/postgres.js";
+import { poolnewdb, pool, execute, addStatus, lastStatus }   from "./modules/postgres_m/postgres.js";
 import { valueFromPage }                 from "./modules/parsing_m/parse.js";
 import { dateTimeToLocale }              from "./modules/common_m/common.js";
 import dotenv from "dotenv"
+
 dotenv.config()
 
 const intervalSeconds  = 60;
@@ -69,5 +70,6 @@ const myFunc = () => {
 };
 
 console.log(process.env.TG_USERS.split(','))
+
 
 setInterval(myFunc, intervalSeconds * 1000);
