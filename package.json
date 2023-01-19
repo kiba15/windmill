@@ -11,10 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.3",
-<<<<<<< HEAD
-    "jdom": "^3.2.5",
-=======
->>>>>>> 35fc7bc487b387cf5b3f8c31630ff4f57de84bd8
     "jsdom": "^21.0.0",
     "node-fetch": "^3.3.0",
     "node-telegram-bot-api": "^0.61.0",
