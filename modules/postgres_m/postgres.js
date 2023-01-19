@@ -5,21 +5,23 @@ const { Pool } = pg;
 
 dotenv.config();
 
-
 const poolnewdb = new Pool({
   user: process.env.DB_USER,
   host: process.env.HOST,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
 });
-console.log(process.env.DB_DATABASE)
+console.log(process.env.DB_DATABASE);
 //(async () => {
-// create database if not exists 
-const dbQuery = await poolnewdb.query(`SELECT FROM pg_database WHERE datname = $1`, [process.env.DB_DATABASE])
-if (dbQuery.rows.length === 0)  {
-    // database does not exist, make it:
-    await poolnewdb.query(`CREATE DATABASE ${process.env.DB_DATABASE}`)
-    console.log(`Database ${process.env.DB_DATABASE} created!`)
+// create database if not exists
+const dbQuery = await poolnewdb.query(
+  `SELECT FROM pg_database WHERE datname = $1`,
+  [process.env.DB_DATABASE]
+);
+if (dbQuery.rows.length === 0) {
+  // database does not exist, make it:
+  await poolnewdb.query(`CREATE DATABASE ${process.env.DB_DATABASE}`);
+  console.log(`Database ${process.env.DB_DATABASE} created!`);
 }
 //})()
 
@@ -67,6 +69,7 @@ pool.query(
   }
 );
 
+// FUNCTION EXECUTE
 const execute = async (query) => {
   try {
     await pool.connect(); // gets connection
@@ -80,23 +83,22 @@ const execute = async (query) => {
   }
 };
 
+// FUNCTION LASTSTATUS
 const lastStatus = async () => {
-
   const query = `select * from status
   order by date desc limit 1;`;
-  const client = await pool.connect()
+  const client = await pool.connect();
   try {
-    const res = await client.query(query)
-    return (res.rowCount ? res.rows[0] : undefined)
+    const res = await client.query(query);
+    return res.rowCount ? res.rows[0] : undefined;
   } catch (err) {
-    console.log(err.stack)
+    console.log(err.stack);
   } finally {
-    client.release()
+    client.release();
   }
-}
+};
 
-
-
+// FUNCTION ADDSTATUS
 const addStatus = async (statusObject) => {
   //
   const query = `INSERT INTO status (date, status, comment)
@@ -117,6 +119,8 @@ const addStatus = async (statusObject) => {
       });
   });
 };
+
+// FUNCTION ADDUSERACTION
 const addUserAction = async (actionObject) => {
   //
   const query = `INSERT INTO useractions (date, userid, username, action)

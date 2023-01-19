@@ -1,4 +1,4 @@
-import { chatIds, adminId, token, bot }  from "./modules/telegram_m/telegram.js";
+import { chatIds, adminIds, token, bot }  from "./modules/telegram_m/telegram.js";
 import { poolnewdb, pool, execute, addStatus, lastStatus }   from "./modules/postgres_m/postgres.js";
 import { valueFromPage }                 from "./modules/parsing_m/parse.js";
 import { dateTimeToLocale }              from "./modules/common_m/common.js";
@@ -64,7 +64,7 @@ const myFunc = () => {
       
     } catch (err) {
       console.log("Error - " + err.message);
-      bot.sendMessage(adminId, err.message)
+      adminIds.forEach((id) => bot.sendMessage(id, err.message))
     }
   })();
 };

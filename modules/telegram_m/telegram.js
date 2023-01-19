@@ -3,19 +3,18 @@ import {
   lastStatus,
   addUserAction,
 } from "../../modules/postgres_m/postgres.js";
-import { valueFromPage } from "../../modules/parsing_m/parse.js";
+import { valueFromPage }    from "../../modules/parsing_m/parse.js";
 import { dateTimeToLocale } from "../../modules/common_m/common.js";
-import fetch from "node-fetch";
-import jsdom from "jsdom";
+import fetch  from "node-fetch";
+import jsdom  from "jsdom";
 import dotenv from "dotenv";
 dotenv.config();
 
 const { JSDOM } = jsdom;
 
 const token = process.env.TG_TOKEN;
-const chatIds = process.env.TG_USERS.split(",");
-const adminId = process.env.TG_ADMIN;
-
+const chatIds  = process.env.TG_USERS.split(",");
+const adminIds = process.env.TG_ADMIN.split(",");
 const bot = new TelegramBot(token, { polling: true });
 
 // ОБРАБОТКА СТАРТА БОТА
@@ -36,7 +35,7 @@ bot.onText(/\/start/, (msg) => {
 
   let ButtonMas = [["Статус Wind/Power"]];
 
-  if (chatId.toString() === adminId.toString()) {
+  if (adminIds.includes(chatId)) {
     ButtonMas.push(["Статистика"]);
   }
 
@@ -165,4 +164,4 @@ bot.on("message", (msg) => {
   }
 });
 
-export { chatIds, adminId, token, bot };
+export { chatIds, adminIds, token, bot };
