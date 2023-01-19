@@ -98,6 +98,21 @@ const lastStatus = async () => {
   }
 };
 
+// FUNCTION GETLASTACTIONS
+const getLastActions = async () => {
+  const query = `select * from useractions 
+  order by date desc limit 10;`;
+  const client = await pool.connect();
+  try {
+    const res = await client.query(query);
+    return res.rowCount ? res.rows : undefined;
+  } catch (err) {
+    console.log(err.stack);
+  } finally {
+    client.release();
+  }
+};
+
 // FUNCTION ADDSTATUS
 const addStatus = async (statusObject) => {
   //
@@ -142,4 +157,4 @@ const addUserAction = async (actionObject) => {
   });
 };
 
-export { poolnewdb, pool, execute, addStatus, addUserAction, lastStatus };
+export { poolnewdb, pool, execute, addStatus, addUserAction, lastStatus, getLastActions};

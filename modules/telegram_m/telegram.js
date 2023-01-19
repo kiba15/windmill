@@ -1,6 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import {
   lastStatus,
+  getLastActions,
   addUserAction,
 } from "../../modules/postgres_m/postgres.js";
 import { valueFromPage }    from "../../modules/parsing_m/parse.js";
@@ -132,15 +133,22 @@ bot.on("message", (msg) => {
           action: msg.text,
         });
 
-        const result = await lastStatus();
+        const resultStatus = await lastStatus();
+        const lastActions   = await getLastActions();
+
         bot.sendMessage(
           chatId,
-          result === undefined
+          resultStatus === undefined
             ? `Последний статус еще не записан...`
-            : `Последний статус ${result.status} - ${dateTimeToLocale(
-                result.date
+            : `Последний статус ${resultStatus.status} - ${dateTimeToLocale(
+              resultStatus.date
               )}`
         );
+        bot.sendMessage(
+          chatId,
+          JSON.stringify(lastActions)
+        );
+
       } catch (err) {
         bot.sendMessage(chatId, `Ошибка получения данных! ${err.message}`);
       }
