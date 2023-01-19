@@ -24,7 +24,7 @@ URL_STATUS1 ="http://XXX.com:17574/readreg.htm;reg-R1103;fmt-UINT;rfs-14"
 URL_STATUS2 ="http://XXX.com:17574/readreg.htm;reg-R1104;fmt-UINT;rfs-14"
 URL_WIND    ="http://XXX.com:17574/readreg.htm;reg-R1068;fmt-REAL;rfs-15"
 URL_POWER   ="http://XXX.com:17574/readreg.htm;reg-R1075;fmt-UINT;rfs-14"
-TG_TOKEN='XXXXXXXXXX'
-TG_USERS='XXXXXXXXXX'
-TG_ADMIN='XXXXXXXXXX'
+TG_TOKEN='XXXXXXXXXXXXXXXXXXXX'
+TG_USERS='00000, 11111, 22222, 33333'
+TG_ADMIN='00000, 3333'
 
