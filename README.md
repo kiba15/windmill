@@ -7,10 +7,10 @@ Telegram Bot for controlling Windmill:
 
 INSTALL
 
-1. Git clone
-2. npm install
-3. install postgresql
-4. fill .env file
+1. Clone repository (git clone)
+2. npm install (install dependencies)
+3. Install Postgresql
+4. Fill .env file
 
 .ENV structure
 
@@ -24,7 +24,7 @@ URL_STATUS1 ="http://windscada.com:17574/readreg.htm;reg-R1103;fmt-UINT;rfs-14"
 URL_STATUS2 ="http://windscada.com:17574/readreg.htm;reg-R1104;fmt-UINT;rfs-14"
 URL_WIND    ="http://windscada.com:17574/readreg.htm;reg-R1068;fmt-REAL;rfs-15"
 URL_POWER   ="http://windscada.com:17574/readreg.htm;reg-R1075;fmt-UINT;rfs-14"
-TG_TOKEN='XXXXX'
-TG_USERS='XXXXX'
-TG_ADMIN='XXXXX'
+TG_TOKEN='XXXXXXXXXX'
+TG_USERS='XXXXXXXXXX'
+TG_ADMIN='XXXXXXXXXX'
 
