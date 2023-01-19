@@ -144,10 +144,12 @@ bot.on("message", (msg) => {
               resultStatus.date
               )}`
         );
-        bot.sendMessage(
-          chatId,
-          JSON.stringify(lastActions)
-        );
+        
+        let stringActions = ''
+        lastActions.forEach((el) => stringActions = stringActions + `${dateTimeToLocale(el.date)} ${el.username}\n${el.action}\n`) 
+         if (stringActions) {
+            bot.sendMessage(chatId, stringActions);
+        }
 
       } catch (err) {
         bot.sendMessage(chatId, `Ошибка получения данных! ${err.message}`);
