@@ -1,5 +1,5 @@
 # windmill
-Telegram Bot for controlling Windmill:
+Telegram Bot for controlling Windmill (my first JS project)
 
 - It gets notification when status of Windmill changes.
 - User can get status and other parameters by clicking a bot button
