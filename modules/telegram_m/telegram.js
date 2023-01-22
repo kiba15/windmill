@@ -9,6 +9,8 @@ import { dateTimeToLocale } from "../../modules/common_m/common.js";
 import fetch  from "node-fetch";
 import jsdom  from "jsdom";
 import dotenv from "dotenv";
+import axios from "axios";
+import fs from "fs";
 dotenv.config();
 
 const { JSDOM } = jsdom;
@@ -90,6 +92,72 @@ bot.on("message", (msg) => {
     bot.sendMessage(chatId, `Access denied for ${chatId}`);
     return;
   }
+  
+  if (msg.photo) {
+       
+       const fileId = msg.photo[msg.photo.length - 1].file_id;
+       
+       if (!fs.existsSync('./images')){fs.mkdirSync('./images')}
+       
+       bot.getFileLink(fileId)
+         .then(link=> 
+             axios({method: "get", url: link, responseType: "stream"})
+             .then(response =>
+             response.data.pipe(fs.createWriteStream("./images/"+fileId))
+          )); 
+          
+ 
+        // Запишем в bd действие
+        (async () => {
+         await addUserAction({
+            userId: chatId,  
+            messageId: msg.message_id,
+            messageType: 'image',            
+            userName: msg.chat.first_name,
+            fileId: fileId,                
+            action: fileId,
+          });
+        })();
+        bot.sendMessage(
+          chatId,
+          `Получили ваше изображение! ${fileId} ${msg.message_id} ${msg.chat.first_name} ${chatId}`
+         );       
+        return;              
+ 
+  }
+  if (msg.document) {
+  
+       const fileId = msg.document.file_id;
+       const fileName = msg.document.file_name
+      
+       if (!fs.existsSync('./documents')){fs.mkdirSync('./documents')}
+       
+       bot.getFileLink(fileId)
+         .then(link=> 
+             axios({method: "get", url: link, responseType: "stream"})
+             .then(response =>
+             response.data.pipe(fs.createWriteStream("./documents/"+fileId))
+          )); 
+          
+
+      // Запишем в bd действие
+      (async () => {
+       await addUserAction({
+            userId: chatId,  
+            messageId: msg.message_id,
+            messageType: 'document',            
+            userName: msg.chat.first_name,
+            fileId: fileId,            
+            action: fileName,
+        });
+      })();
+      bot.sendMessage(
+        chatId,
+        `Получили ваш документ! ${fileName} ${msg.message_id} ${msg.chat.first_name} ${chatId}`
+       );       
+      return;        
+              
+  }
 
   if (msg.text === "Статус Wind/Power") {
     bot.sendMessage(chatId, `Получение данных с сервера ...`);
@@ -99,8 +167,11 @@ bot.on("message", (msg) => {
       try {
         // Запишем в bd действие
         await addUserAction({
-          userId: chatId,
+          userId: chatId,  
+          messageId: msg.message_id,
+          messageType: 'command',          
           userName: msg.chat.first_name,
+          fileId: undefined,            
           action: msg.text,
         });
 
@@ -128,12 +199,15 @@ bot.on("message", (msg) => {
       try {
         // Запишем в bd действие
         await addUserAction({
-          userId: chatId,
+          userId: chatId,  
+          messageId: msg.message_id,
+          messageType: 'command',          
           userName: msg.chat.first_name,
+          fileId: undefined, 
           action: msg.text,
         });
 
-        const resultStatus = await lastStatus();
+        const resultStatus  = await lastStatus();
         const lastActions   = await getLastActions();
 
         bot.sendMessage(
@@ -159,8 +233,11 @@ bot.on("message", (msg) => {
     // Запишем в bd действие
     (async () => {
       await addUserAction({
-        userId: chatId,
+        userId: chatId,  
+        messageId: msg.message_id,
+        messageType: 'text',         
         userName: msg.chat.first_name,
+        fileId: undefined,         
         action: msg.text,
       });
     })();

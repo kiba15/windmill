@@ -1,8 +1,7 @@
 // ПОДКЛЮЧЕНИЕ К POSTGRESQL
-import dotenv from "dotenv";
 import pg from "pg";
 const { Pool } = pg;
-
+import dotenv from "dotenv";
 dotenv.config();
 
 const poolnewdb = new Pool({
@@ -53,11 +52,14 @@ pool.query(
 // create table "useractions"
 pool.query(
   `CREATE TABLE IF NOT EXISTS "useractions" (
-	    "date" TIMESTAMP,
-	    "userid" VARCHAR(20) NOT NULL,
-	    "username" VARCHAR(20) NOT NULL,         
-	    "action" VARCHAR(200),
-	    PRIMARY KEY ("date")
+	    "date"        TIMESTAMP,
+	    "userid"      VARCHAR(20) NOT NULL,
+	    "messageid"   VARCHAR(20) NOT NULL,         
+	    "messagetype" VARCHAR(20) NOT NULL,         
+	    "username"    VARCHAR(20) NOT NULL,    
+      "fileid"      VARCHAR(299) NOT NULL,         
+	    "action"      VARCHAR(200),
+	    PRIMARY KEY (date, messageid)
      )`,
   (err, res) => {
     if (err) {
@@ -138,8 +140,8 @@ const addStatus = async (statusObject) => {
 // FUNCTION ADDUSERACTION
 const addUserAction = async (actionObject) => {
   //
-  const query = `INSERT INTO useractions (date, userid, username, action)
-  VALUES(current_timestamp(2), '${actionObject.userId}', '${actionObject.userName}', '${actionObject.action}');`;
+  const query = `INSERT INTO useractions (date, userid, messageid, username, messagetype, fileid, action)
+  VALUES(current_timestamp(2), '${actionObject.userId}', '${actionObject.messageId}', '${actionObject.userName}', '${actionObject.messageType}', '${actionObject.fileId}', '${actionObject.action}');`;
   //console.log(query)
 
   pool.connect().then((client) => {
