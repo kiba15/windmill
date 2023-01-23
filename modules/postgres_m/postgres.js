@@ -58,7 +58,7 @@ pool.query(
 	    "messagetype" VARCHAR(20) NOT NULL,         
 	    "username"    VARCHAR(20) NOT NULL,    
       "fileid"      VARCHAR(299) NOT NULL,         
-	    "action"      VARCHAR(200),
+	    "text"      VARCHAR(200),
 	    PRIMARY KEY (date, messageid)
      )`,
   (err, res) => {
@@ -140,8 +140,8 @@ const addStatus = async (statusObject) => {
 // FUNCTION ADDUSERACTION
 const addUserAction = async (actionObject) => {
   //
-  const query = `INSERT INTO useractions (date, userid, messageid, username, messagetype, fileid, action)
-  VALUES(current_timestamp(2), '${actionObject.userId}', '${actionObject.messageId}', '${actionObject.userName}', '${actionObject.messageType}', '${actionObject.fileId}', '${actionObject.action}');`;
+  const query = `INSERT INTO useractions (date, userid, messageid, username, messagetype, fileid, text)
+  VALUES(current_timestamp(2), '${actionObject.userId}', '${actionObject.messageId}', '${actionObject.userName}', '${actionObject.messageType}', '${actionObject.fileId}', '${actionObject.text}');`;
   //console.log(query)
 
   pool.connect().then((client) => {

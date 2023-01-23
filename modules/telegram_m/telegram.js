@@ -20,6 +20,9 @@ const chatIds  = process.env.TG_USERS.split(",");
 const adminIds = process.env.TG_ADMIN.split(",");
 const bot = new TelegramBot(token, { polling: true });
 
+// это чтобы telegrem не ругался при отправке фото
+process.env["NTBA_FIX_350"] = 1;
+
 // ОБРАБОТКА СТАРТА БОТА
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id.toString();
@@ -105,7 +108,6 @@ bot.on("message", (msg) => {
              .then(response =>
              response.data.pipe(fs.createWriteStream("./images/"+fileId))
           )); 
-          
  
         // Запишем в bd действие
         (async () => {
@@ -115,7 +117,7 @@ bot.on("message", (msg) => {
             messageType: 'image',            
             userName: msg.chat.first_name,
             fileId: fileId,                
-            action: fileId,
+            text: '',
           });
         })();
         bot.sendMessage(
@@ -127,18 +129,19 @@ bot.on("message", (msg) => {
   }
   if (msg.document) {
   
-       const fileId = msg.document.file_id;
+       const fileId   = msg.document.file_id;
        const fileName = msg.document.file_name
+       const fullDirName = './documents/' + fileId;
       
        if (!fs.existsSync('./documents')){fs.mkdirSync('./documents')}
+       if (!fs.existsSync(fullDirName)){fs.mkdirSync(fullDirName)}       
        
        bot.getFileLink(fileId)
          .then(link=> 
              axios({method: "get", url: link, responseType: "stream"})
              .then(response =>
-             response.data.pipe(fs.createWriteStream("./documents/"+fileId))
+             response.data.pipe(fs.createWriteStream(fullDirName + '/' + fileName))
           )); 
-          
 
       // Запишем в bd действие
       (async () => {
@@ -148,7 +151,7 @@ bot.on("message", (msg) => {
             messageType: 'document',            
             userName: msg.chat.first_name,
             fileId: fileId,            
-            action: fileName,
+            text: fileName,
         });
       })();
       bot.sendMessage(
@@ -160,6 +163,7 @@ bot.on("message", (msg) => {
   }
 
   if (msg.text === "Статус Wind/Power") {
+    // Статус Wind/Power ************************ Статус Wind/Power   
     bot.sendMessage(chatId, `Получение данных с сервера ...`);
 
     // Обернули в асинхронную функцию
@@ -172,7 +176,7 @@ bot.on("message", (msg) => {
           messageType: 'command',          
           userName: msg.chat.first_name,
           fileId: undefined,            
-          action: msg.text,
+          text: msg.text,
         });
 
         // STATUSES
@@ -192,6 +196,7 @@ bot.on("message", (msg) => {
       }
     })();
   } else if (msg.text === "Статистика") {
+    // СТАТИСТИКА ************************ СТАТИСТИКА
     bot.sendMessage(chatId, `Получение данных из базы данных ...`);
 
     // Обернули в асинхронную функцию
@@ -204,7 +209,7 @@ bot.on("message", (msg) => {
           messageType: 'command',          
           userName: msg.chat.first_name,
           fileId: undefined, 
-          action: msg.text,
+          text: msg.text,
         });
 
         const resultStatus  = await lastStatus();
@@ -219,16 +224,34 @@ bot.on("message", (msg) => {
               )}`
         );
         
-         if (lastActions.length) {
-            bot.sendMessage(chatId, lastActions.reduce((mes, el) => mes = mes + `${dateTimeToLocale(el.date)} ${el.username}\n${el.action}\n`, '' ));
-        }
+//         if (lastActions.length) {
+//            bot.sendMessage(chatId, lastActions.reduce((mes, el) => mes = mes + `${dateTimeToLocale(el.date)} ${el.username}\n${el.messagetype + ': ' + el.text}\n-----\n`, '' ));
+//        }
+
+        for (const el of lastActions) {
+           await bot.sendMessage(chatId, `${dateTimeToLocale(el.date)} ${el.username}\n${el.messagetype + ': ' + el.text}\n-----\n`);
+           el.messagetype === 'image' 
+           ? await bot.sendPhoto(chatId, './images/' + el.fileid)
+           : el.messagetype === 'document' 
+           ?  await bot.sendDocument(chatId, el.fileid)      
+           : ''
+        }   
+
+        //await lastActions.forEach((el) => {
+        //  bot.sendMessage(chatId, `${dateTimeToLocale(el.date)} ${el.username}\n${el.messagetype + ': ' + el.text}\n-----\n`);
+        //  el.messagetype === 'image' 
+        //  ? bot.sendPhoto(chatId, './images/' + el.fileid)
+        //  : ''
+        // } )
+        
+        // bot.sendPhoto(chatId, './images/AgACAgIAAxkBAAEBcA9jzYiccnnxFA8XEkYQj9pWz3y_uQAC28MxG1zdaEoMJtmt33MHYAEAAwIAA3kAAy0E')
+        //.then(data => console.log(data));
 
       } catch (err) {
         bot.sendMessage(chatId, `Ошибка получения данных! ${err.message}`);
       }
     })();
   } else {
-    //chatIds.forEach((chatId) => bot.sendMessage(chatId, msg.text));
 
     // Запишем в bd действие
     (async () => {
@@ -238,7 +261,7 @@ bot.on("message", (msg) => {
         messageType: 'text',         
         userName: msg.chat.first_name,
         fileId: undefined,         
-        action: msg.text,
+        text: msg.text,
       });
     })();
 
