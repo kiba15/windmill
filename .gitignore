@@ -1,4 +1,7 @@
 node_modules/
+documents/
+images/
+
 /dist
 package-lock.json
 logs
