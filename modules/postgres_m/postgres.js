@@ -5,10 +5,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const poolnewdb = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.HOST,
+  user:     process.env.DB_USER,
+  host:     process.env.HOST,
   password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  port:     process.env.DB_PORT,
 });
 console.log(process.env.DB_DATABASE);
 //(async () => {
@@ -25,11 +25,11 @@ if (dbQuery.rows.length === 0) {
 //})()
 
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.HOST,
+  user:     process.env.DB_USER,
+  host:     process.env.HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  port:     process.env.DB_PORT,
 });
 
 // create table "status"
