@@ -4,7 +4,12 @@ const { Pool } = pg;
 import dotenv from "dotenv";
 dotenv.config();
 
-const poolnewdb = new Pool({
+let pool
+let poolnewdb
+
+try {
+
+poolnewdb = new Pool({
   user:     process.env.DB_USER,
   host:     process.env.HOST,
   password: process.env.DB_PASSWORD,
@@ -24,7 +29,7 @@ if (dbQuery.rows.length === 0) {
 }
 //})()
 
-const pool = new Pool({
+pool = new Pool({
   user:     process.env.DB_USER,
   host:     process.env.HOST,
   database: process.env.DB_DATABASE,
@@ -70,6 +75,12 @@ pool.query(
     }
   }
 );
+
+}
+
+catch (err) {
+      console.log(err.stack);
+}
 
 // FUNCTION EXECUTE
 const execute = async (query) => {

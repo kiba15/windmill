@@ -23,6 +23,12 @@ const bot = new TelegramBot(token, { polling: true });
 // это чтобы telegrem не ругался при отправке фото
 process.env["NTBA_FIX_350"] = 1;
 
+  
+bot.setMyCommands([
+   {command: '/start', description: 'Запуск бота'},
+   {command: '/status',  description: 'Статус Wind/Power'},    
+])
+  
 // ОБРАБОТКА СТАРТА БОТА
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id.toString();
@@ -162,7 +168,7 @@ bot.on("message", (msg) => {
               
   }
 
-  if (msg.text === "Статус Wind/Power") {
+  if (msg.text === "Статус Wind/Power" || msg.text === '/status' ) {
     // Статус Wind/Power ************************ Статус Wind/Power   
     bot.sendMessage(chatId, `Получение данных с сервера ...`);
 
